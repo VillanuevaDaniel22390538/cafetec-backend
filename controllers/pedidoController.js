@@ -64,12 +64,24 @@ exports.crearPedido = async (req, res) => {
 
 exports.getPedidosUsuario = async (req, res) => {
   try {
+    // Verificar si es admin (debes implementar esta lógica)
+    const esAdmin = await esUsuarioAdmin(req.user.id); // ← necesitas esta función
+
+    const whereCondition = esAdmin 
+      ? {} // Admin: todos los pedidos
+      : { id_usuario: req.user.id }; // Usuario normal: solo sus pedidos
+
     const pedidos = await Pedido.findAll({
-      where: { id_usuario: req.user.id },
+      where: whereCondition,
       order: [['fecha_pedido', 'DESC']],
       include: [
+        { model: Usuario, attributes: ['nombre', 'email'] }, // Para admin
         { model: HorarioDisponible, attributes: ['hora_inicio', 'hora_fin'] },
-        { model: DetallePedido, include: [{ model: Producto, attributes: ['nombre_producto'] }] }
+        { 
+          model: DetallePedido, 
+          include: [{ model: Producto, attributes: ['nombre_producto'] }] 
+        },
+        { model: EstadoPedido, attributes: ['nombre_estado'] }
       ]
     });
     res.json(pedidos);

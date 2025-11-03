@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { Usuario } = require('../models');
+const { Usuario, Rol } = require('../models');
+
 require('dotenv').config();
 
 // Registro
@@ -22,7 +23,13 @@ exports.register = async (req, res) => {
       contrasena: hashedPassword,
       telefono
     });
-    
+
+    // ✅ Asignar rol por defecto
+    const rolEstudiante = await Rol.findOne({ where: { nombre_rol: 'estudiante' } });
+    if (rolEstudiante) {
+      await usuario.addRol(rolEstudiante);
+    }
+
     const payload = { user: { id: usuario.id_usuario } };
     jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
       if (err) throw err;
@@ -33,6 +40,7 @@ exports.register = async (req, res) => {
     res.status(500).send('Error en el servidor');
   }
 };
+
 
 // Login
 exports.login = async (req, res) => {
@@ -63,9 +71,15 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.user.id, {
-      attributes: ['id_usuario', 'nombre', 'email', 'telefono', 'fecha_registro']
+      attributes: ['id_usuario', 'nombre', 'email', 'telefono', 'fecha_registro', 'activo'],
+      include: [{
+        model: Rol,
+        attributes: ['id_rol', 'nombre_rol'],
+        through: { attributes: [] } // Oculta la tabla intermedia
+      }]
     });
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado.' });
+
     res.json(usuario);
   } catch (err) {
     console.error(err.message);
