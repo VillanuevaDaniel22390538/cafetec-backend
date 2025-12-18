@@ -1,29 +1,27 @@
+// cafetec-backend/models/Producto.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Producto = sequelize.define('productos', {
+const Producto = sequelize.define('Producto', {
   id_producto: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  nombre_producto: {
-    type: DataTypes.STRING(150),
-    allowNull: false
+  nombre: { // ✅ Esto en el código
+    type: DataTypes.STRING(100),
+    allowNull: false,
+    field: 'nombre_producto' // ✅ Pero en la BD es nombre_producto
   },
   descripcion: {
     type: DataTypes.TEXT
   },
   precio: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-    validate: {
-      min: 0
-    }
+    allowNull: false
   },
   id_categoria: {
-    type: DataTypes.INTEGER,
-    allowNull: false
+    type: DataTypes.INTEGER
   },
   imagen_url: {
     type: DataTypes.STRING(255)
@@ -34,11 +32,12 @@ const Producto = sequelize.define('productos', {
   },
   stock: {
     type: DataTypes.INTEGER,
-    defaultValue: 999
+    defaultValue: 0
   }
 }, {
   tableName: 'productos',
-  timestamps: false
+  timestamps: false,
+  underscored: true
 });
 
 module.exports = Producto;

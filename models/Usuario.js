@@ -1,3 +1,4 @@
+// cafetec-backend/models/Usuario.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 

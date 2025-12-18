@@ -1,7 +1,8 @@
+// cafetec-backend/models/Pedido.js - VERSIÓN FINAL
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 
-const Pedido = sequelize.define('pedidos', {
+const Pedido = sequelize.define('Pedido', {
   id_pedido: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -17,7 +18,8 @@ const Pedido = sequelize.define('pedidos', {
   },
   id_estado: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
+    defaultValue: 1
   },
   fecha_pedido: {
     type: DataTypes.DATE,
@@ -29,17 +31,30 @@ const Pedido = sequelize.define('pedidos', {
   },
   total: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
-    validate: {
-      min: 0
-    }
+    allowNull: false
   },
   notas: {
     type: DataTypes.TEXT
+  },
+  pagado: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
+  metodo_pago: {
+    type: DataTypes.STRING(50)
+  },
+  updatedat: { // ✅ EXACTAMENTE como está en la BD (minúsculas)
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+    field: 'updatedat' // Esto es redundante pero explícito
   }
 }, {
   tableName: 'pedidos',
-  timestamps: false
+  timestamps: false,
+  // ✅ IMPORTANTE: Configuración para PostgreSQL
+  underscored: true, // Convierte camelCase a snake_case
+  createdAt: false, // No usar created_at automático
+  updatedAt: 'updatedat' // Mapear updatedAt a updatedat
 });
 
 module.exports = Pedido;

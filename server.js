@@ -36,7 +36,8 @@ const authRoutes = require('./routes/authRoutes');
 const productoRoutes = require('./routes/productoRoutes');
 const pedidoRoutes = require('./routes/pedidoRoutes');
 const ventaRoutes = require('./routes/ventaRoutes');
-const uploadRoutes = require('./routes/upload'); // ✅ require correcto
+const uploadRoutes = require('./routes/upload');
+const adminRoutes = require('./routes/adminRoutes'); // ✅ NUEVA RUTA AGREGADA
 
 //  Asignar rutas base
 app.use('/api/auth', authRoutes);
@@ -44,6 +45,7 @@ app.use('/api/productos', productoRoutes);
 app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/ventas', ventaRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/admin', adminRoutes); // ✅ NUEVA RUTA AGREGADA
 
 //  Ruta raíz
 app.get('/', (req, res) => {
